@@ -1,0 +1,10 @@
+.section {
+     width: 76.25rem;
+     margin: 0 auto;
+
+     &__headline {
+          font-weight: 700;
+          font-size: 36px;
+          line-height: 45px;
+     }
+}
