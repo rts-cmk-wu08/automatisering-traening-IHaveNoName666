@@ -6,7 +6,14 @@ let UpdateForm = function(id) {
     element.classList.add('contactForm')
     
         fetch(`http://localhost:4000/comments/${id}`)
-        .then(response => response.json())
+        .then(response => {
+            
+            if(response.status !== 200) {
+                throw "Something went wrong"
+            }
+            
+            return response.json()
+        })
         .then(data => {
             console.log(data)
         
@@ -16,31 +23,31 @@ let UpdateForm = function(id) {
     element.innerHTML = `
         <div class="contactForm__group">
             <label for="firstname">Fornavn:</label>
-            <input value=${data.firstname} type="text" name="firstname" id="firstname" required minlength=2 />
+            <input value="${data.firstname}" type="text" name="firstname" id="firstname" required minlength=2 />
         </div>
         <div class="contactForm__group">
             <label for="lastname">Efternavn:</label>
-            <input value=${data.lastname} type="text" name="lastname" id="lastname" required minlength=3 />
+            <input value="${data.lastname}" type="text" name="lastname" id="lastname" required minlength=3 />
         </div>
         <div class="contactForm__group">
             <label for="address">Adresse:</label>
-            <input value=${data.address} type="text" name="address" id="address" required patterm="[a-zA-ZæøåÆØÅ 0-9]" />
+            <input value="${data.address}" type="text" name="address" id="address" required />
         </div>
         <div class="contactForm__group">
             <label for="postalcode">Post nr.:</label>
-            <input value=${data.postalcode} type="text" name="postalcode" id="postalcode" required pattern="[0-9]{4}"  />
+            <input value="${data.postalcode}" type="text" name="postalcode" id="postalcode" required pattern="[0-9]{4}"  />
         </div>
         <div class="contactForm__group">
             <label for="city">By:</label>
-            <input value=${data.city} type="text" name="city" id="city" />
+            <input value="${data.city}" type="text" name="city" id="city" />
         </div>
         <div class="contactForm__group">
             <label for="email">E-mail:</label>
-            <input value=${data.email} title="Indtast en valid email adresse." type="email" name="email" id="email" required pattern="[A-Za-z0-9-._+]+@[A-Za-z0-9.-]+\[.]+[a-zA-Z]{2,}"/>
+            <input value="${data.email}" title="Indtast en valid email adresse." type="email" name="email" id="email" required pattern="[A-Za-z0-9-._+]+@[A-Za-z0-9.-]+\[.]+[a-zA-Z]{2,}"/>
         </div>
         <div class="contactForm__group">
             <label for="phone">Telefon:</label>
-            <input value=${data.phone} type="tel" name="phone" id="phone" required pattern="[0-9]{8}" />
+            <input value="${data.phone}" type="tel" name="phone" id="phone" required pattern="[0-9]{8}" />
         </div>
         <div class="contactForm__group">
             <label for="message">Besked:</label>
@@ -65,21 +72,44 @@ let UpdateForm = function(id) {
                 message: e.target.message.value,
             }
     
-            console.log(data)
+            //console.log(data)
     
-            /*
-            fetch("http://localhost:4000/comments", {
-                method: 'POST',
+            
+            fetch(`http://localhost:4000/comments/${id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-type': 'application/json; charset=UTF-8'
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            */
+            .then(response =>{
+                console.log(response)
+                if(response.status === 200) {
+                    console.log("Resursen er opdateret")
+
+                    element.innerHTML = `
+                    <h1>Din kommentar er blevet opdateret</h1>
+                    `
+                    setTimeout(() => {
+                        window.location.replace("/index.html")  
+
+                    }, 1500 )
+                }
+            })
+            //.then(data => console.log(data))
+            
         })
     
+    })
+
+    .catch(error => {
+        console.log(error)
+
+        element.innerHTML = `
+        <h1>There was an error</h1>
+        <p>It looks ike you are trying to modify a non exsisting resource</p>
+        <p>Click <a href="/index.html">here</a> to return to the front page.</p>
+        `
     })
     
     return element

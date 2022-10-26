@@ -11,6 +11,4 @@ let main = document.createElement("main")
 
 main.append(UpdateForm(id))
 
-
-
 element.append(main)
